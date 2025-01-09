@@ -15,7 +15,9 @@ const SignUp: React.FC = () => {
 
     return (
       <div className="max-w-md mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-primary">
+            Sign Up
+        </h1>
         <form onSubmit={handleNext} className="flex flex-col">
           <input
             type="email"
@@ -35,7 +37,7 @@ const SignUp: React.FC = () => {
           />
           <button
             type="submit"
-            className="bg-primary text-white py-2 px-4 rounded hover:brightness-75"
+            className="bg-secondary text-white py-2 px-4 rounded hover:brightness-75"
           >
             <p className = "font-semibold">Next</p>
           </button>

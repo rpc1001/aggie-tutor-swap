@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-
 const courses = [
   "MAT 21A", "MAT 21B", "MAT 22A", "ECS 032A", "ECS 032B", 
   "ECS 036A", "ECS 150", "CHE 002A", "PHY 009A", "STA 013",
@@ -22,7 +21,6 @@ const CourseSelection: React.FC = () => {
 // incase someone just went straight to the courses URL
   React.useEffect(() => {
     if (!email || !password) {
-      // if states are  missing redirect back to sign up page
       navigate('/signup');
     }
   }, [email, password, navigate]);
@@ -38,29 +36,24 @@ const CourseSelection: React.FC = () => {
 
   const toggleCourse = (course: string, type: 'help' | 'tutor') => {
     if (type === 'help') {
-      if (needHelpCourses.includes(course)) {
-        setNeedHelpCourses(prev => prev.filter(c => c !== course)); // remove  course
-      } else {
-        setNeedHelpCourses(prev => [...prev, course]); // add course
-      }
+      setNeedHelpCourses((prev) =>
+        prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
+      );
     } else {
-      if (canTutorCourses.includes(course)) {
-        setCanTutorCourses(prev => prev.filter(c => c !== course)); // remove course
-      } else {
-        setCanTutorCourses(prev => [...prev, course]); // add course
-      }
+      setCanTutorCourses((prev) =>
+        prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
+      );
     }
   };
 
   const handleNext = () => {
-    // pass along the selected courses to next page
     navigate('/contact-info', {
       state: {
         email,
         password,
         needHelpCourses,
-        canTutorCourses
-      }
+        canTutorCourses,
+      },
     });
   };
 
@@ -72,10 +65,9 @@ const CourseSelection: React.FC = () => {
       <div className="flex flex-col gap-4 w-full max-w-2xl">
         {/* Row for "Need Help" and "Can Tutor" Sections */}
         <div className="flex flex-row gap-4">
-
           {/* Need Help Section */}
           <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
-            <h2 className="text-xl font-semibold mb-4 text-text">Need Help</h2>
+            <h2 className="text-xl text-center font-semibold mb-4 text-text">Need Help</h2>
             <input
               type="text"
               placeholder="Search courses..."
@@ -83,28 +75,30 @@ const CourseSelection: React.FC = () => {
               value={needHelpSearch}
               onChange={(e) => setNeedHelpSearch(e.target.value)}
             />
-            <div className="max-h-64 overflow-y-auto">
+            <div className="max-h-64 overflow-y-auto grid grid-cols-2 gap-2">
               {filteredNeedHelpCourses.length > 0 ? (
                 filteredNeedHelpCourses.map((course) => (
-                  <label key={course} className="block mb-2">
-                    <input
-                      type="checkbox"
-                      checked={needHelpCourses.includes(course)}
-                      onChange={() => toggleCourse(course, 'help')}
-                      className="mr-2"
-                    />
+                  <button
+                    key={course}
+                    onClick={() => toggleCourse(course, 'help')}
+                    className={`py-2 px-4 rounded text-sm font-semibold ${
+                      needHelpCourses.includes(course)
+                        ? 'bg-primary text-white'
+                        : 'bg-zinc-700 text-gray-300 hover:brightness-75'
+                    } `}
+                  >
                     {course}
-                  </label>
+                  </button>
                 ))
               ) : (
                 <p className="text-gray-500">No courses found</p>
               )}
             </div>
           </div>
-  
+
           {/* Can Tutor Section */}
           <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
-            <h2 className="text-xl font-semibold mb-4 text-text">Can Tutor</h2>
+            <h2 className="text-xl font-semibold mb-4 text-text text-center">Can Tutor</h2>
             <input
               type="text"
               placeholder="Search courses..."
@@ -112,18 +106,20 @@ const CourseSelection: React.FC = () => {
               value={canTutorSearch}
               onChange={(e) => setCanTutorSearch(e.target.value)}
             />
-            <div className="max-h-64 overflow-y-auto">
+            <div className="max-h-64 overflow-y-auto grid grid-cols-2 gap-2">
               {filteredCanTutorCourses.length > 0 ? (
                 filteredCanTutorCourses.map((course) => (
-                  <label key={course} className="block mb-2">
-                    <input
-                      type="checkbox"
-                      checked={canTutorCourses.includes(course)}
-                      onChange={() => toggleCourse(course, 'tutor')}
-                      className="mr-2"
-                    />
+                  <button
+                    key={course}
+                    onClick={() => toggleCourse(course, 'tutor')}
+                    className={`py-2 px-4 rounded text-sm font-semibold ${
+                      canTutorCourses.includes(course)
+                        ? 'bg-primary text-white'
+                        : 'bg-zinc-700 text-gray-300 hover:brightness-75'
+                    }`}
+                  >
                     {course}
-                  </label>
+                  </button>
                 ))
               ) : (
                 <p className="text-gray-500">No courses found</p>
@@ -131,20 +127,19 @@ const CourseSelection: React.FC = () => {
             </div>
           </div>
         </div>
-  
+
         {/* Next Button */}
         <div className="flex justify-center">
           <button
             onClick={handleNext}
-            className="bg-secondary hover:brightness-75 text-white py-2 px-4 rounded mt-4"
+            className="bg-secondary text-white py-2 px-4 rounded hover:brightness-75"
           >
-            Next
+            <p className="font-semibold">Next</p>
           </button>
         </div>
       </div>
     </div>
   );
-  
 };
 
 export default CourseSelection;
