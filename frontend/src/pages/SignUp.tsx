@@ -1,14 +1,22 @@
 import {useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-  
+    const navigate = useNavigate();
+
+    // move on to course selection
+    const handleNext = (e: React.FormEvent) => {
+        e.preventDefault();
+        navigate('/courses', { state: { email, password } });
+    };
+
     return (
       <div className="max-w-md mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Sign Up</h1>
-        <form className="flex flex-col">
+        <form onSubmit={handleNext} className="flex flex-col">
           <input
             type="email"
             placeholder="UC Davis Email"
