@@ -64,75 +64,87 @@ const CourseSelection: React.FC = () => {
     });
   };
 
-
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Select Your Courses</h1>
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Need Help Selection */}
-        <div className="flex-1">
-          <h2 className="text-xl font-semibold mb-4">Need Help</h2>
-          <input
-            type="text"
-            placeholder="Search courses..."
-            className="border p-2 w-full mb-4"
-            value={needHelpSearch}
-            onChange={(e) => setNeedHelpSearch(e.target.value)}
-          />
-          <div className="max-h-64 overflow-y-auto border rounded p-2">
-            {filteredNeedHelpCourses.length > 0 ? (
-              filteredNeedHelpCourses.map((course) => (
-                <label key={course} className="block">
-                  <input
-                    type="checkbox"
-                    checked={needHelpCourses.includes(course)}
-                    onChange={() => toggleCourse(course, 'help')}
-                  />
-                  <span className="ml-2">{course}</span>
-                </label>
-              ))
-            ) : (
-              <p className="text-gray-500">No courses found</p>
-            )}
+    <div className="p-8 bg-zinc-900 flex flex-col items-center min-h-screen">
+      <h1 className="text-3xl font-bold mb-8 text-center text-primary">
+        Select Your Courses
+      </h1>
+      <div className="flex flex-col gap-4 w-full max-w-2xl">
+        {/* Row for "Need Help" and "Can Tutor" Sections */}
+        <div className="flex flex-row gap-4">
+
+          {/* Need Help Section */}
+          <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
+            <h2 className="text-xl font-semibold mb-4 text-text">Need Help</h2>
+            <input
+              type="text"
+              placeholder="Search courses..."
+              className="border outline-none border-gray-600 bg-zinc-700 p-2 rounded w-full mb-4 text-text"
+              value={needHelpSearch}
+              onChange={(e) => setNeedHelpSearch(e.target.value)}
+            />
+            <div className="max-h-64 overflow-y-auto">
+              {filteredNeedHelpCourses.length > 0 ? (
+                filteredNeedHelpCourses.map((course) => (
+                  <label key={course} className="block mb-2">
+                    <input
+                      type="checkbox"
+                      checked={needHelpCourses.includes(course)}
+                      onChange={() => toggleCourse(course, 'help')}
+                      className="mr-2"
+                    />
+                    {course}
+                  </label>
+                ))
+              ) : (
+                <p className="text-gray-500">No courses found</p>
+              )}
+            </div>
+          </div>
+  
+          {/* Can Tutor Section */}
+          <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
+            <h2 className="text-xl font-semibold mb-4 text-text">Can Tutor</h2>
+            <input
+              type="text"
+              placeholder="Search courses..."
+              className="border outline-none border-gray-600 bg-zinc-700 p-2 rounded w-full mb-4 text-text"
+              value={canTutorSearch}
+              onChange={(e) => setCanTutorSearch(e.target.value)}
+            />
+            <div className="max-h-64 overflow-y-auto">
+              {filteredCanTutorCourses.length > 0 ? (
+                filteredCanTutorCourses.map((course) => (
+                  <label key={course} className="block mb-2">
+                    <input
+                      type="checkbox"
+                      checked={canTutorCourses.includes(course)}
+                      onChange={() => toggleCourse(course, 'tutor')}
+                      className="mr-2"
+                    />
+                    {course}
+                  </label>
+                ))
+              ) : (
+                <p className="text-gray-500">No courses found</p>
+              )}
+            </div>
           </div>
         </div>
-
-        {/* Can Tutor Section */}
-        <div className="flex-1">
-          <h2 className="text-xl font-semibold mb-4">Can Tutor</h2>
-          <input
-            type="text"
-            placeholder="Search courses..."
-            className="border p-2 w-full mb-4"
-            value={canTutorSearch}
-            onChange={(e) => setCanTutorSearch(e.target.value)}
-          />
-          <div className="max-h-64 overflow-y-auto border rounded p-2">
-            {filteredCanTutorCourses.length > 0 ? (
-              filteredCanTutorCourses.map((course) => (
-                <label key={course} className="block">
-                  <input
-                    type="checkbox"
-                    checked={canTutorCourses.includes(course)}
-                    onChange={() => toggleCourse(course, 'tutor')}
-                  />
-                  <span className="ml-2">{course}</span>
-                </label>
-              ))
-            ) : (
-              <p className="text-gray-500">No courses found</p>
-            )}
-          </div>
+  
+        {/* Next Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={handleNext}
+            className="bg-secondary hover:brightness-75 text-white py-2 px-4 rounded mt-4"
+          >
+            Next
+          </button>
         </div>
       </div>
-      <button
-        onClick={handleNext}
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-6 block mx-auto"
-      >
-        Next
-      </button>
     </div>
   );
+  
 };
 
 export default CourseSelection;

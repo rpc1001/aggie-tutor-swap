@@ -20,24 +20,24 @@ const SignUp: React.FC = () => {
           <input
             type="email"
             placeholder="UC Davis Email"
-            className="border p-2"
+            className="border outline-none border-gray-600 bg-zinc-800 p-2 rounded mb-4 text-text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
-            placeholder="Password"
-            className="border p-2 mb-2"
+            placeholder="Any Password"
+            className="border outline-none border-gray-600 bg-zinc-800 p-2 rounded mb-6 text-text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <button
             type="submit"
-            className="bg-green-800 text-white py-2 px-4 rounded hover:brightness-75"
+            className="bg-primary text-white py-2 px-4 rounded hover:brightness-75"
           >
-            Next
+            <p className = "font-semibold">Next</p>
           </button>
         </form>
       </div>
