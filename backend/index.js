@@ -60,3 +60,37 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    // Authenticate the user with Supabase
+    const { data: session, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      if (error.message.toLowerCase().includes('email not confirmed')) {
+        return res.status(403).json({ error: 'Email not confirmed' });
+      }
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Return session information to the frontend
+    return res.status(200).json({
+      message: 'Login successful',
+      user: session.user,
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
