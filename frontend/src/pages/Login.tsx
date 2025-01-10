@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient'; // <--- Make sure you import this
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,17 +12,19 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('http://localhost:3001/api/login', {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
+      if (error) {
+        setErrorMessage(error.message || 'Login failed');
+        return;
+      }
 
-      navigate('/dashboard');
+      navigate('/view-matches');
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.error || 'Login failed');
+      setErrorMessage('An unexpected error occurred during login');
     }
   };
 

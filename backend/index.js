@@ -14,9 +14,6 @@ const supabaseKey = process.env.SUPABASE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// TODO: add any input validation routes (domain check, handles)
-
-
 app.post('/api/signup', async (req, res) => {
   try {
     const { email, password, needHelpCourses, canTutorCourses, contactInfo } = req.body;
@@ -27,7 +24,7 @@ app.post('/api/signup', async (req, res) => {
     });
     if (signUpError) {
       throw signUpError;
-    }3
+    }
     const userId = signUpData.user?.id;
 
     if (!userId) {
@@ -61,36 +58,108 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.post('/api/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
+app.post('/api/update-matches', async (req, res) => {
+  const { userId } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  // helper function to find the intersection of two arrays:
+  const intersect = (arr1 = [], arr2 = []) => {
+    return arr1.filter((item) => arr2.includes(item));
+  };
+
+  try {
+    // get the current user's profile
+    const { data: userProfile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, need_help_courses, can_tutor_courses, matches')
+      .eq('id', userId)
+      .single();
+
+    if (profileError || !userProfile) {
+      return res.status(404).json({ error: 'User profile not found' });
     }
 
-    // Authenticate the user with Supabase
-    const { data: session, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { need_help_courses, can_tutor_courses, matches = [] } = userProfile;
+
+    // fetch all other profiles to find potential matches
+    const { data: potentialMatches, error: matchError } = await supabase
+      .from('profiles')
+      .select('id, need_help_courses, can_tutor_courses')
+      .not('id', 'eq', userId);
+
+    if (matchError) {
+      return res.status(500).json({ error: 'Failed to fetch profiles' });
+    }
+
+    // determine which profiles are actually matches
+    const newMatches = potentialMatches.filter((profile) => {
+      const youCanHelp = intersect(can_tutor_courses, profile.need_help_courses);
+      const theyCanHelp = intersect(profile.can_tutor_courses, need_help_courses);
+      // match if both intersections are  non-empty (help needs to go both ways)
+      return youCanHelp.length > 0 && theyCanHelp.length > 0;
     });
 
-    if (error) {
-      if (error.message.toLowerCase().includes('email not confirmed')) {
-        return res.status(403).json({ error: 'Email not confirmed' });
-      }
-      return res.status(401).json({ error: 'Invalid email or password' });
+    // update the user's matches array in DB
+    const newMatchIds = newMatches.map((m) => m.id);
+    const updatedMatches = [...new Set([...matches, ...newMatchIds])]; // combine unique
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ matches: updatedMatches })
+      .eq('id', userId);
+
+    if (updateError) {
+      return res.status(500).json({ error: 'Failed to update user matches' });
     }
 
-    // Return session information to the frontend
+    // 5) For each newly matched user, make sure they have this user in their 'matches' array
+    for (const matchId of newMatchIds) {
+      const { data: matchProfile, error: matchProfileError } = await supabase
+        .from('profiles')
+        .select('matches')
+        .eq('id', matchId)
+        .single();
+
+      if (!matchProfileError && matchProfile) {
+        const matchUpdatedMatches = [...new Set([...matchProfile.matches, userId])];
+        await supabase
+          .from('profiles')
+          .update({ matches: matchUpdatedMatches })
+          .eq('id', matchId);
+      }
+    }
+
+    // fetch the full matched profiles
+    const { data: matchedProfiles, error: matchedProfilesError } = await supabase
+      .from('profiles')
+      .select('id, contact_info, need_help_courses, can_tutor_courses')
+      .in('id', updatedMatches);
+
+    if (matchedProfilesError) {
+      return res
+        .status(500)
+        .json({ error: 'Failed to fetch matched profiles' });
+    }
+
+    // attach intersection details (youCanHelp, theyCanHelp) for frontend clarity
+    const enrichedMatches = matchedProfiles.map((m) => {
+      const youCanHelp = intersect(can_tutor_courses, m.need_help_courses);
+      const theyCanHelp = intersect(m.can_tutor_courses, need_help_courses);
+      return {
+        ...m,
+        youCanHelp,
+        theyCanHelp,
+      };
+    });
+
     return res.status(200).json({
-      message: 'Login successful',
-      user: session.user,
-      access_token: session.access_token,
-      refresh_token: session.refresh_token,
+      message: 'Matches updated successfully',
+      matches: enrichedMatches,
     });
   } catch (err) {
-    console.error('Login error:', err);
+    console.error('Error updating matches:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });

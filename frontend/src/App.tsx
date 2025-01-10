@@ -6,6 +6,7 @@ import Summary from './pages/Summary.tsx';
 import Home from './pages/Home.tsx';
 import Verified from './pages/Verified.tsx'
 import Login from './pages/Login.tsx'
+import ViewMatches from './pages/ViewMatches.tsx'
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/summary" element={<Summary />} />
           <Route path = "/verified" element = {<Verified />} />
           <Route path = "/login" element = {<Login />} />
-
+          <Route path = "/view-matches" element = {<ViewMatches />} />
         </Routes>
       </Router>
     </div>
