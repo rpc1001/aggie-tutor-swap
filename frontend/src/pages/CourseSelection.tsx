@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const courses = [
-  "MAT 21A", "MAT 21B", "MAT 22A", "ECS 032A", "ECS 032B", 
-  "ECS 036A", "ECS 150", "CHE 002A", "PHY 009A", "STA 013",
+  'MAT 21A',
+  'MAT 21B',
+  'MAT 22A',
+  'ECS 032A',
+  'ECS 032B',
+  'ECS 036A',
+  'ECS 150',
+  'CHE 002A',
+  'PHY 009A',
+  'STA 013',
 ];
 
 const CourseSelection: React.FC = () => {
@@ -15,33 +23,42 @@ const CourseSelection: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-// get the variables from previous 
-  const { email, password } = (location.state as { email: string; password: string }) || {};
+  // get the variables from previous
+  const { email, password } =
+    (location.state as { email: string; password: string }) || {};
 
-// incase someone just went straight to the courses URL
+  // incase someone just went straight to the courses URL
   React.useEffect(() => {
     if (!email || !password) {
+      // if states are  missing redirect back to sign up page
       navigate('/signup');
     }
   }, [email, password, navigate]);
 
-
-  // filter courses on search 
-  const filteredNeedHelpCourses = courses.filter((course) =>
-    course.toLowerCase().includes(needHelpSearch.toLowerCase())
+  // filter courses on search
+  const filteredNeedHelpCourses = courses.filter(
+    (course) =>
+      course.toLowerCase().includes(needHelpSearch.toLowerCase()) &&
+      !canTutorCourses.includes(course)
   );
-  const filteredCanTutorCourses = courses.filter((course) =>
-    course.toLowerCase().includes(canTutorSearch.toLowerCase())
+  const filteredCanTutorCourses = courses.filter(
+    (course) =>
+      course.toLowerCase().includes(canTutorSearch.toLowerCase()) &&
+      !needHelpCourses.includes(course)
   );
 
   const toggleCourse = (course: string, type: 'help' | 'tutor') => {
     if (type === 'help') {
       setNeedHelpCourses((prev) =>
-        prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
+        prev.includes(course)
+          ? prev.filter((c) => c !== course)
+          : [...prev, course]
       );
     } else {
       setCanTutorCourses((prev) =>
-        prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
+        prev.includes(course)
+          ? prev.filter((c) => c !== course)
+          : [...prev, course]
       );
     }
   };
@@ -67,7 +84,9 @@ const CourseSelection: React.FC = () => {
         <div className="flex flex-row gap-4">
           {/* Need Help Section */}
           <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
-            <h2 className="text-xl text-center font-semibold mb-4 text-text">Need Help</h2>
+            <h2 className="text-xl text-center font-semibold mb-4 text-text">
+              Need Help
+            </h2>
             <input
               type="text"
               placeholder="Search courses..."
@@ -98,7 +117,9 @@ const CourseSelection: React.FC = () => {
 
           {/* Can Tutor Section */}
           <div className="bg-zinc-800 p-4 rounded-lg shadow-lg flex-1">
-            <h2 className="text-xl font-semibold mb-4 text-text text-center">Can Tutor</h2>
+            <h2 className="text-xl font-semibold mb-4 text-text text-center">
+              Can Tutor
+            </h2>
             <input
               type="text"
               placeholder="Search courses..."

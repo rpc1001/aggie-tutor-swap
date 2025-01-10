@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LuMail, LuPhone} from "react-icons/lu";
-import { FaDiscord,FaInstagram, FaSnapchat } from "react-icons/fa6";
+import { LuMail, LuPhone } from 'react-icons/lu';
+import { FaDiscord, FaInstagram, FaSnapchat } from 'react-icons/fa6';
 
 const ContactInfo: React.FC = () => {
   const [contactInfo, setContactInfo] = useState({
@@ -15,29 +15,32 @@ const ContactInfo: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-// get the variables from previous 
-const { email, password, needHelpCourses, canTutorCourses } =
+  // get the variables from previous
+  const { email, password, needHelpCourses, canTutorCourses } =
     (location.state as {
-        email:string;
-        password: string;
-        needHelpCourses: string[];
-        canTutorCourses: string[];
+      email: string;
+      password: string;
+      needHelpCourses: string[];
+      canTutorCourses: string[];
     }) || {};
 
-// incase someone just went straight to the courses URL
+  // incase someone just went straight to the courses URL
   React.useEffect(() => {
     if (!email || !password || !needHelpCourses || !canTutorCourses) {
-    // if states are  missing redirect back to sign up page
+      // if states are  missing redirect back to sign up page
       navigate('/signup');
     }
-  }, [email, password,needHelpCourses, canTutorCourses, navigate]);
+  }, [email, password, needHelpCourses, canTutorCourses, navigate]);
 
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContactInfo({ ...contactInfo, [field]: e.target.value });
-  };
+  const handleChange =
+    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setContactInfo({ ...contactInfo, [field]: e.target.value });
+    };
 
   const handleNext = () => {
-    const hasContactInfo = Object.values(contactInfo).some((info) => info.trim() !== '');
+    const hasContactInfo = Object.values(contactInfo).some(
+      (info) => info.trim() !== ''
+    );
 
     if (!hasContactInfo) {
       alert('Please provide at least one contact method!');
@@ -61,7 +64,10 @@ const { email, password, needHelpCourses, canTutorCourses } =
         Provide Your Contact Info For Others
       </h1>
       <p className="text-gray-400 text-m mb-6 text-center">
-        <span className ="font-semibold">Enter at least <span className="text-secondary">one</span> contact method. Additional methods are optional. </span>
+        <span className="font-semibold">
+          Enter at least <span className="text-secondary">one</span> contact
+          method. Additional methods are optional.{' '}
+        </span>
       </p>
       <div className="bg-zinc-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
         <form className="space-y-4">
