@@ -55,7 +55,7 @@ const location = useLocation();
   };
 
   return (
-    <div className="p-8 bg-zinc-900 flex flex-col items-center min-h-screen">
+    <div className="p-8 bg-background flex flex-col items-center min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-center text-primary">
         Overview
       </h1>

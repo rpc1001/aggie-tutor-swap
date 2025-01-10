@@ -27,9 +27,29 @@ app.post('/api/signup', async (req, res) => {
     });
     if (signUpError) {
       throw signUpError;
+    }3
+    const userId = signUpData.user?.id;
+
+    if (!userId) {
+      throw new Error('User ID not returned by Supabase');
     }
 
-    return res.status(200).json({ message: 'User created successfully', userId });
+    // insert data into the profiles table
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .insert([
+        {
+          id: userId,
+          need_help_courses: needHelpCourses,
+          can_tutor_courses: canTutorCourses,
+          contact_info: contactInfo,
+        },
+      ]);
+      if (profileError) {
+        throw profileError;
+      }
+  
+    return res.status(200).json({ message: 'User created successfully'});
   } catch (error) {
     console.error(error);
     return res.status(400).json({ error: error.message });
