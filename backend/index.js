@@ -4,9 +4,16 @@ const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // connect to Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
