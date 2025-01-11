@@ -62,8 +62,9 @@ export default function ViewMatches() {
         }
 
         // request to backend to get profiles of all the matches
+        const apiUrl = import.meta.env.VITE_BACKEND_URL;
         const { data } = await axios.post(
-          'http://localhost:3001/api/update-matches',
+          `${apiUrl}/api/update-matches`,
           { userId }
         );
 

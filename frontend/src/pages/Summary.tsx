@@ -36,8 +36,10 @@ const location = useLocation();
 
   const handleConfirm = async () => {
     try {
+      const apiUrl = import.meta.env.VITE_BACKEND_URL;
+
       const { data } = await axios.post(
-        'http://localhost:3001/api/signup',
+        `{apiUrl}/api/signup`,
         state
       );
       console.log(
