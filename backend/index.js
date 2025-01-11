@@ -144,15 +144,22 @@ app.post('/api/update-matches', async (req, res) => {
     }
 
     // attach intersection details (youCanHelp, theyCanHelp) for frontend clarity
-    const enrichedMatches = matchedProfiles.map((m) => {
+    const enrichedMatches = matchedProfiles
+    .map((m) => {
       const youCanHelp = intersect(can_tutor_courses, m.need_help_courses);
       const theyCanHelp = intersect(m.can_tutor_courses, need_help_courses);
-      return {
-        ...m,
-        youCanHelp,
-        theyCanHelp,
-      };
-    });
+      // only include profiles where both arrays are non-empty
+      if (youCanHelp.length > 0 && theyCanHelp.length > 0) {
+        return {
+          ...m,
+          youCanHelp,
+          theyCanHelp,
+        };
+      }
+      return null;
+    })
+    .filter((m) => m !== null); // filter out null values
+  
 
     return res.status(200).json({
       message: 'Matches updated successfully',

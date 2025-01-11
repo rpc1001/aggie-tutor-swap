@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient'; // <--- Make sure you import this
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,14 +16,14 @@ const Login = () => {
         email,
         password,
       });
-
+      console.log(data?.weakPassword);
       if (error) {
         setErrorMessage(error.message || 'Login failed');
         return;
       }
 
       navigate('/view-matches');
-    } catch (err: any) {
+    } catch {
       setErrorMessage('An unexpected error occurred during login');
     }
   };

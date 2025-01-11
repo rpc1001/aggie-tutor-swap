@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import axios from 'axios';
 import { supabase } from '../supabaseClient';
 // Icons
 import { LuMail, LuPhone } from 'react-icons/lu';
 import { FaDiscord, FaInstagram, FaSnapchat } from 'react-icons/fa6';
+
+
 
 interface ContactInfo {
   sms?: string;
@@ -27,6 +31,7 @@ export default function ViewMatches() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
   // map each contact method to its icon
   const contactIconsMap: { [key: string]: JSX.Element } = {
     email: <LuMail className="text-gray-300 text-lg" />,
@@ -64,8 +69,8 @@ export default function ViewMatches() {
 
         // data.matches is now an array of profiles
         setMatches(data.matches || []);
-      } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to load matches');
+      } catch {
+        setError('Failed to load matches');
       } finally {
         setLoading(false);
       }
@@ -76,17 +81,25 @@ export default function ViewMatches() {
 
   return (
     <div className="p-8 bg-zinc-900 flex flex-col items-center min-h-screen">
+
       <h1 className="text-4xl font-bold text-primary mb-6">Your Matches</h1>
-      {loading && <p className="text-gray-400">Loading matches...</p>}
+      <div className="flex justify-between items-center mb-4">
+        <button
+          onClick={() => navigate('/edit-profile')}
+          className="bg-secondary text-white py-2 px-4 rounded hover:brightness-75"
+        >
+          Edit Profile
+        </button>
+      </div>
+      {loading && <p className="text-gray-300">Loading matches...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {matches.length === 0 && !loading && !error && (
         <p className="text-gray-400">
           No matches found. Update your courses to find matches!
         </p>
       )}
-
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl">
-        {matches.map((match, index) => (
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl mx-auto justify-center">
+          {matches.map((match, index) => (
           <div
             key={match.id}
             className="bg-zinc-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
@@ -102,10 +115,8 @@ export default function ViewMatches() {
                 <ul className="space-y-2">
                   {Object.entries(match.contact_info).map(([key, value]) => {
                     if (!value) return null;
-
                     // find the corresponding icon
                     const icon = contactIconsMap[key];
-
                     return (
                       <li key={key} className="flex items-center space-x-2 text-gray-300">
                         {icon}

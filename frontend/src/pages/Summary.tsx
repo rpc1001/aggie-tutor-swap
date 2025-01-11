@@ -46,10 +46,9 @@ const location = useLocation();
       alert(
         'Sign up successful. Please check your email to confirm your account.'
       );
-    } catch (error: any) {
-      console.error(error);
+    } catch {
       alert(
-        'Failed to create user: ' + error.response?.data?.error || error.message
+        'Failed to create user.'
       );
     }
   };

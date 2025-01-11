@@ -7,6 +7,7 @@ import Home from './pages/Home.tsx';
 import Verified from './pages/Verified.tsx'
 import Login from './pages/Login.tsx'
 import ViewMatches from './pages/ViewMatches.tsx'
+import EditProfile from './pages/EditProfile.tsx'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path = "/verified" element = {<Verified />} />
           <Route path = "/login" element = {<Login />} />
           <Route path = "/view-matches" element = {<ViewMatches />} />
+          <Route path = "/edit-profile" element = {<EditProfile />} />
         </Routes>
       </Router>
     </div>
