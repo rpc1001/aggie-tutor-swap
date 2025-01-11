@@ -5,17 +5,8 @@ require('dotenv').config();
 
 const app = express();
 
-const corsOptions = {
-  origin: 'https://aggie-tutor-swap.up.railway.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-};
-console.log('FRONTEND_URL:', process.env.FRONTEND_URL);
+app.use(cors());
 
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(express.json()); 
 
 // connect to Supabase
